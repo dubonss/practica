@@ -1,0 +1,57 @@
+/*
+ * jlex eli dubon
+ * Abril - 14
+ */
+package analizadores;
+import java_cup.runtime.Symbol; 
+
+%% 
+%class Lexico
+%public 
+%line 
+%char 
+%cup 
+%unicode
+%ignorecase
+
+%init{ 
+	//la varible yylinea, llevara el numero de lienas del analizador que enpesara de uno
+	//la varaible yychar lleve el numero de caratcteres del analizador
+    yyline = 1; 
+    yychar = 1; 
+%init} 
+	//BLANCOS sera la expresion regular
+	//D el que reconosera el valor de entero
+	//DD reconosera numeros con punto desimal
+	BLANCOS=[ \r\t]+
+	D=[0-9]+
+	DD=[0-9]+("."[  |0-9]+)?
+
+%%
+	//luego definiremos las reglas lexicas en las que veremos el patrona reconoserlas
+
+	"Evaluar" {return new Symbol(sym.REVALUAR,yyline,yychar,
+                             yytext());} 
+
+	";" {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());} 
+	"(" {return new Symbol(sym.PARIZQ,yyline,yychar, yytext());} 
+	")" {return new Symbol(sym.PARDER,yyline,yychar, yytext());} 
+	"[" {return new Symbol(sym.CORIZQ,yyline,yychar, yytext());} 
+	"]" {return new Symbol(sym.CORDER,yyline,yychar, yytext());} 
+
+	"+" {return new Symbol(sym.MAS,yyline,yychar, yytext());} 
+	"-" {return new Symbol(sym.MENOS,yyline,yychar, yytext());} 
+	"*" {return new Symbol(sym.POR,yyline,yychar, yytext());} 
+	"/" {return new Symbol(sym.DIVIDIDO,yyline,yychar, yytext());} 
+
+	// daremos un salto de linea
+	\n {yychar=1;}
+
+	{BLANCOS} {} 
+	{D} {return new Symbol(sym.ENTERO,yyline,yychar, yytext());} 
+	{DD} {return new Symbol(sym.DECIMAL,yyline,yychar, yytext());} 
+
+	. {
+		//mostraremos los errores lexicos 
+	    System.out.println("Error lexico: "+yytext()+ ", linea: "+yyline+", columna: "+yychar);
+}
